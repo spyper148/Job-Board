@@ -3258,6 +3258,12 @@ h3 {
 .job_listing_area .job_lists {
   margin-top: 50px;
 }
+.job_lists{
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 842px;
+  height: 936px;
+}
 
 /* line 18, ../../Arafath/CL/December/235. Job board/HTML/scss/_job_list.scss */
 .job_listing_area .job_lists .single_jobs {

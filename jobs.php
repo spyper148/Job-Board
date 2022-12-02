@@ -1,3 +1,21 @@
+<?php
+$db=require 'db/db.php';
+$jobs = $db->query('SELECT jobs.id, jobs.name, locations.name AS l_name, job_types.name as types_name, firms.src, jobs.date, jobs.Salary, categories.name as cat_name, experiences.name as e_name, qualifications.name as q_name, gender.name as g_name
+FROM jobs 
+INNER JOIN job_types ON jobs.id_job_types = job_types.id 
+INNER JOIN locations ON locations.id = jobs.id_locations 
+INNER JOIN firms ON firms.id = jobs.id_firm 
+INNER JOIN gender ON jobs.id_gender = gender.id
+INNER JOIN experiences ON experiences.id = jobs.id_experiences
+INNER JOIN categories ON categories.id = jobs.id_categories
+INNER JOIN qualifications ON qualifications.id = jobs.id_qualifications')->fetchAll(PDO::FETCH_ASSOC);
+$categories = $db -> query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC);
+$gender = $db -> query('SELECT * FROM gender')->fetchAll(PDO::FETCH_ASSOC);
+$qualification = $db -> query('SELECT * FROM qualifications')->fetchAll(PDO::FETCH_ASSOC);
+$job_types = $db -> query('SELECT * FROM job_types')->fetchAll(PDO::FETCH_ASSOC);
+$experiences = $db -> query('SELECT * FROM experiences')->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!doctype html>
 <html class="no-js" lang="zxx">
 
@@ -135,9 +153,10 @@
                                     <div class="col-lg-12">
                                         <div class="single_field">
                                             <select class="wide">
-                                                <option data-display="Category">Category</option>
-                                                <option value="1">Category 1</option>
-                                                <option value="2">Category 2 </option>
+                                                <option data-display="Category" >Category</option>
+                                                <?php foreach ($categories as $category):?>
+                                                <option value="1"><?=$category['name']?></option>
+                                                <?php  endforeach;?>
                                             </select>
                                         </div>
                                     </div>
@@ -145,8 +164,9 @@
                                         <div class="single_field">
                                             <select class="wide">
                                                 <option data-display="Experience">Experience</option>
-                                                <option value="1">Experience 1</option>
-                                                <option value="2">Experience 2 </option>
+                                                <?php foreach ($experiences as $experience):?>
+                                                <option value="1"><?=$experience['name']?></option>
+                                                <?php endforeach;?>
                                             </select>
                                         </div>
                                     </div>
@@ -215,20 +235,21 @@
 
                     <div class="job_lists m-0">
                         <div class="row">
+                            <?php foreach ($jobs as $job): ?>
                             <div class="col-lg-12 col-md-12">
                                 <div class="single_jobs white-bg d-flex justify-content-between">
                                     <div class="jobs_left d-flex align-items-center">
                                         <div class="thumb">
-                                            <img src="img/svg_icon/1.svg" alt="">
+                                            <img src=<?=$job['src']?> alt="">
                                         </div>
                                         <div class="jobs_conetent">
-                                            <a href="job_details.php"><h4>Software Engineer</h4></a>
+                                            <a href="job_details.php?id=<?=$job['id']?>"><h4><?=$job['name']?></h4></a>
                                             <div class="links_locat d-flex align-items-center">
                                                 <div class="location">
-                                                    <p> <i class="fa fa-map-marker"></i> California, USA</p>
+                                                    <p> <i class="fa fa-map-marker"></i> <?=$job['l_name']?></p>
                                                 </div>
                                                 <div class="location">
-                                                    <p> <i class="fa fa-clock-o"></i> Part-time</p>
+                                                    <p> <i class="fa fa-clock-o"></i> <?=$job['types_name']?></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -236,173 +257,17 @@
                                     <div class="jobs_right">
                                         <div class="apply_now">
                                             <a class="heart_mark" href="#"> <i class="fa fa-heart"></i> </a>
-                                            <a href="job_details.php" class="boxed-btn3">Apply Now</a>
+                                            <a href="job_details.php?id=<?=$job['id']?>" class="boxed-btn3">Apply Now</a>
                                         </div>
                                         <div class="date">
-                                            <p>Date line: 31 Jan 2020</p>
+                                            <p>Date line: <?=$job['date']?></p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-12 col-md-12">
-                                <div class="single_jobs white-bg d-flex justify-content-between">
-                                    <div class="jobs_left d-flex align-items-center">
-                                        <div class="thumb">
-                                            <img src="img/svg_icon/2.svg" alt="">
-                                        </div>
-                                        <div class="jobs_conetent">
-                                            <a href="job_details.php"><h4>Digital Marketer</h4></a>
-                                            <div class="links_locat d-flex align-items-center">
-                                                <div class="location">
-                                                    <p> <i class="fa fa-map-marker"></i> California, USA</p>
-                                                </div>
-                                                <div class="location">
-                                                    <p> <i class="fa fa-clock-o"></i> Part-time</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="jobs_right">
-                                        <div class="apply_now">
-                                            <a class="heart_mark" href="#"> <i class="fa fa-heart"></i> </a>
-                                            <a href="job_details.php" class="boxed-btn3">Apply Now</a>
-                                        </div>
-                                        <div class="date">
-                                            <p>Date line: 31 Jan 2020</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12">
-                                <div class="single_jobs white-bg d-flex justify-content-between">
-                                    <div class="jobs_left d-flex align-items-center">
-                                        <div class="thumb">
-                                            <img src="img/svg_icon/3.svg" alt="">
-                                        </div>
-                                        <div class="jobs_conetent">
-                                            <a href="job_details.php"><h4>Wordpress Developer</h4></a>
-                                            <div class="links_locat d-flex align-items-center">
-                                                <div class="location">
-                                                    <p> <i class="fa fa-map-marker"></i> California, USA</p>
-                                                </div>
-                                                <div class="location">
-                                                    <p> <i class="fa fa-clock-o"></i> Part-time</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="jobs_right">
-                                        <div class="apply_now">
-                                            <a class="heart_mark" href="#"> <i class="fa fa-heart"></i> </a>
-                                            <a href="job_details.php" class="boxed-btn3">Apply Now</a>
-                                        </div>
-                                        <div class="date">
-                                            <p>Date line: 31 Jan 2020</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12">
-                                <div class="single_jobs white-bg d-flex justify-content-between">
-                                    <div class="jobs_left d-flex align-items-center">
-                                        <div class="thumb">
-                                            <img src="img/svg_icon/4.svg" alt="">
-                                        </div>
-                                        <div class="jobs_conetent">
-                                            <a href="job_details.php"><h4>Visual Designer</h4></a>
-                                            
-                                            <div class="links_locat d-flex align-items-center">
-                                                <div class="location">
-                                                    <p> <i class="fa fa-map-marker"></i> California, USA</p>
-                                                </div>
-                                                <div class="location">
-                                                    <p> <i class="fa fa-clock-o"></i> Part-time</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="jobs_right">
-                                        <div class="apply_now">
-                                            <a class="heart_mark" href="#"> <i class="fa fa-heart"></i> </a>
-                                            <a href="job_details.php" class="boxed-btn3">Apply Now</a>
-                                        </div>
-                                        <div class="date">
-                                            <p>Date line: 31 Jan 2020</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12">
-                                <div class="single_jobs white-bg d-flex justify-content-between">
-                                    <div class="jobs_left d-flex align-items-center">
-                                        <div class="thumb">
-                                            <img src="img/svg_icon/5.svg" alt="">
-                                        </div>
-                                        <div class="jobs_conetent">
-                                            <a href="job_details.php"><h4>Software Engineer</h4></a>
-                                            <div class="links_locat d-flex align-items-center">
-                                                <div class="location">
-                                                    <p> <i class="fa fa-map-marker"></i> California, USA</p>
-                                                </div>
-                                                <div class="location">
-                                                    <p> <i class="fa fa-clock-o"></i> Part-time</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="jobs_right">
-                                        <div class="apply_now">
-                                            <a class="heart_mark" href="#"> <i class="fa fa-heart"></i> </a>
-                                            <a href="job_details.php" class="boxed-btn3">Apply Now</a>
-                                        </div>
-                                        <div class="date">
-                                            <p>Date line: 31 Jan 2020</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-12 col-md-12">
-                                <div class="single_jobs white-bg d-flex justify-content-between">
-                                    <div class="jobs_left d-flex align-items-center">
-                                        <div class="thumb">
-                                            <img src="img/svg_icon/1.svg" alt="">
-                                        </div>
-                                        <div class="jobs_conetent">
-                                            <a href="job_details.php"><h4>Creative Designer</h4></a>
-                                            <div class="links_locat d-flex align-items-center">
-                                                <div class="location">
-                                                    <p> <i class="fa fa-map-marker"></i> California, USA</p>
-                                                </div>
-                                                <div class="location">
-                                                    <p> <i class="fa fa-clock-o"></i> Part-time</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="jobs_right">
-                                        <div class="apply_now">
-                                            <a class="heart_mark" href="#"> <i class="fa fa-heart"></i> </a>
-                                            <a href="job_details.php" class="boxed-btn3">Apply Now</a>
-                                        </div>
-                                        <div class="date">
-                                            <p>Date line: 31 Jan 2020</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <?php endforeach;?>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="pagination_wrap">
-                                    <ul>
-                                        <li><a href="#"> <i class="ti-angle-left"></i> </a></li>
-                                        <li><a href="#"><span>01</span></a></li>
-                                        <li><a href="#"><span>02</span></a></li>
-                                        <li><a href="#"> <i class="ti-angle-right"></i> </a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>

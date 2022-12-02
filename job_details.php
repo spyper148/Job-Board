@@ -1,3 +1,9 @@
+<?php
+$db= require 'db/db.php';
+$id = $_GET['id'];
+$job = $db->query("SELECT jobs.id, jobs.name,jobs.description, locations.name AS l_name, job_types.name as types_name, firms.src, jobs.date, jobs.Salary FROM jobs INNER JOIN job_types ON jobs.id_job_types = job_types.id INNER JOIN locations ON locations.id = jobs.id_locations INNER JOIN firms ON firms.id = jobs.id_firm WHERE jobs.id='$id'")->fetch(PDO::FETCH_ASSOC);
+?>
+
 <!doctype html>
 <html class="no-js" lang="zxx">
 
@@ -99,7 +105,7 @@
             <div class="row">
                 <div class="col-xl-12">
                     <div class="bradcam_text">
-                        <h3>Software Engineer</h3>
+                        <h3><?=$job['name']?></h3>
                     </div>
                 </div>
             </div>
@@ -115,16 +121,16 @@
                         <div class="single_jobs white-bg d-flex justify-content-between">
                             <div class="jobs_left d-flex align-items-center">
                                 <div class="thumb">
-                                    <img src="img/svg_icon/1.svg" alt="">
+                                    <img src=<?=$job['src']?> alt="">
                                 </div>
                                 <div class="jobs_conetent">
-                                    <a href="#"><h4>Software Engineer</h4></a>
+                                    <a href="#"><h4><?=$job['name']?></h4></a>
                                     <div class="links_locat d-flex align-items-center">
                                         <div class="location">
-                                            <p> <i class="fa fa-map-marker"></i> California, USA</p>
+                                            <p> <i class="fa fa-map-marker"></i> <?=$job['l_name']?></p>
                                         </div>
                                         <div class="location">
-                                            <p> <i class="fa fa-clock-o"></i> Part-time</p>
+                                            <p> <i class="fa fa-clock-o"></i> <?=$job['types_name']?></p>
                                         </div>
                                     </div>
                                 </div>
@@ -139,33 +145,9 @@
                     <div class="descript_wrap white-bg">
                         <div class="single_wrap">
                             <h4>Job description</h4>
-                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing.</p>
-                            <p>Variations of passages of lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing.</p>
+                            <p><?=$job['description']?></p>
                         </div>
-                        <div class="single_wrap">
-                            <h4>Responsibility</h4>
-                            <ul>
-                                <li>The applicants should have experience in the following areas.
-                                </li>
-                                <li>Have sound knowledge of commercial activities.</li>
-                                <li>Leadership, analytical, and problem-solving abilities.</li>
-                                <li>Should have vast knowledge in IAS/ IFRS, Company Act, Income Tax, VAT.</li>
-                            </ul>
-                        </div>
-                        <div class="single_wrap">
-                            <h4>Qualifications</h4>
-                            <ul>
-                                <li>The applicants should have experience in the following areas.
-                                </li>
-                                <li>Have sound knowledge of commercial activities.</li>
-                                <li>Leadership, analytical, and problem-solving abilities.</li>
-                                <li>Should have vast knowledge in IAS/ IFRS, Company Act, Income Tax, VAT.</li>
-                            </ul>
-                        </div>
-                        <div class="single_wrap">
-                            <h4>Benefits</h4>
-                            <p>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing.</p>
-                        </div>
+
                     </div>
                     <div class="apply_job_form white-bg">
                         <h4>Apply for the job</h4>
@@ -219,11 +201,11 @@
                         </div>
                         <div class="job_content">
                             <ul>
-                                <li>Published on: <span>12 Nov, 2019</span></li>
+                                <li>Published on: <span><?=$job['date']?></span></li>
                                 <li>Vacancy: <span>2 Position</span></li>
-                                <li>Salary: <span>50k - 120k/y</span></li>
-                                <li>Location: <span>California, USA</span></li>
-                                <li>Job Nature: <span> Full-time</span></li>
+                                <li>Salary: <span><?=$job['Salary']?>k/y</span></li>
+                                <li>Location: <span><?=$job['l_name']?></span></li>
+                                <li>Job Nature: <span> <?=$job['types_name']?></span></li>
                             </ul>
                         </div>
                     </div>
