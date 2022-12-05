@@ -1,6 +1,21 @@
 <?php
 $db=require 'db/db.php';
-$jobs = $db->query('SELECT jobs.id, jobs.name, locations.name AS l_name, job_types.name as types_name, firms.src, jobs.date, jobs.Salary, categories.name as cat_name, experiences.name as e_name, qualifications.name as q_name, gender.name as g_name
+
+$cat = '>=1';
+$exp = '>=1';
+$loc = '>=1';
+$gen = '>=1';
+$qual = '>=1';
+$job_t = '>=1';
+
+$loc = $_POST['loc'];
+$cat = $_POST['cat'];
+$exp = $_POST['exp'];
+$job_t = $_POST['job_t'];
+$qual = $_POST['qual'];
+$gen = $_POST['gen'];
+
+$jobs = $db->query("SELECT jobs.id, jobs.name, locations.name AS l_name, job_types.name as types_name, firms.src, jobs.date, jobs.Salary, categories.name as cat_name, experiences.name as e_name, qualifications.name as q_name, gender.name as g_name
 FROM jobs 
 INNER JOIN job_types ON jobs.id_job_types = job_types.id 
 INNER JOIN locations ON locations.id = jobs.id_locations 
@@ -8,12 +23,24 @@ INNER JOIN firms ON firms.id = jobs.id_firm
 INNER JOIN gender ON jobs.id_gender = gender.id
 INNER JOIN experiences ON experiences.id = jobs.id_experiences
 INNER JOIN categories ON categories.id = jobs.id_categories
-INNER JOIN qualifications ON qualifications.id = jobs.id_qualifications')->fetchAll(PDO::FETCH_ASSOC);
+INNER JOIN qualifications ON qualifications.id = jobs.id_qualifications
+WHERE id_categories {$cat}  AND
+id_experiences {$exp} AND
+id_locations {$loc} AND
+id_gender {$gen} AND
+id_qualifications {$qual} AND
+id_job_types {$job_t} AND
+id_firm >=1")->fetchAll(PDO::FETCH_ASSOC);
+
 $categories = $db -> query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC);
-$gender = $db -> query('SELECT * FROM gender')->fetchAll(PDO::FETCH_ASSOC);
-$qualification = $db -> query('SELECT * FROM qualifications')->fetchAll(PDO::FETCH_ASSOC);
+$genders = $db -> query('SELECT * FROM gender')->fetchAll(PDO::FETCH_ASSOC);
+$qualifications = $db -> query('SELECT * FROM qualifications')->fetchAll(PDO::FETCH_ASSOC);
 $job_types = $db -> query('SELECT * FROM job_types')->fetchAll(PDO::FETCH_ASSOC);
 $experiences = $db -> query('SELECT * FROM experiences')->fetchAll(PDO::FETCH_ASSOC);
+$locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
+
+
+
 ?>
 
 <!doctype html>
@@ -134,7 +161,7 @@ $experiences = $db -> query('SELECT * FROM experiences')->fetchAll(PDO::FETCH_AS
                     <div class="job_filter white-bg">
                         <div class="form_inner white-bg">
                             <h3>Filter</h3>
-                            <form action="#">
+                            <form action="jobs.php" method="post">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="single_field">
@@ -143,61 +170,66 @@ $experiences = $db -> query('SELECT * FROM experiences')->fetchAll(PDO::FETCH_AS
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="single_field">
-                                            <select class="wide">
-                                                <option data-display="Location">Location</option>
-                                                <option value="1">Rangpur</option>
-                                                <option value="2">Dhaka </option>
+                                            <select class="wide" name="loc">
+                                                <option data-display="Location" value=">=0">Location</option>
+                                                <?php foreach ($locations as $location):?>
+                                                <option value="=<?=$location['id']?>"><?=$location['name']?></option>
+                                                <?php endforeach; ?>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="single_field">
-                                            <select class="wide">
-                                                <option data-display="Category" >Category</option>
+                                            <select class="wide" name="cat">
+                                                <option data-display="Category" value=">=1" >Category</option>
                                                 <?php foreach ($categories as $category):?>
-                                                <option value="1"><?=$category['name']?></option>
+                                                <option value="=<?= $category['id']?>"><?=$category['name']?></option>
                                                 <?php  endforeach;?>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="single_field">
-                                            <select class="wide">
-                                                <option data-display="Experience">Experience</option>
+                                            <select class="wide" name="exp">
+                                                <option data-display="Experience" value=">=1">Experience</option>
                                                 <?php foreach ($experiences as $experience):?>
-                                                <option value="1"><?=$experience['name']?></option>
+                                                <option value="=<?=$experience['id']?>"><?=$experience['name']?></option>
                                                 <?php endforeach;?>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="single_field">
-                                            <select class="wide">
-                                                <option data-display="Job type">Job type</option>
-                                                <option value="1">full time 1</option>
-                                                <option value="2">part time 2 </option>
+                                            <select class="wide" name="job_t">
+                                                <option data-display="Job type" value=">=1">Job type</option>
+                                                <?php foreach ($job_types as $job_type): ?>
+                                                <option value="=<?=$job_type['id']?>"><?=$job_type['name']?></option>
+                                                <?php endforeach; ?>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="single_field">
-                                            <select class="wide">
-                                                <option data-display="Qualification">Qualification</option>
-                                                <option value="1">Qualification 1</option>
-                                                <option value="2">Qualification 2</option>
+                                            <select class="wide" name="qual">
+                                                <option data-display="Qualification" value=">=1">Qualification</option>
+                                                <?php foreach ($qualifications as $qualification):?>
+                                                <option value='=<?=$qualification['id']?>'><?= $qualification['name']?></option>
+                                                <?endforeach; ?>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="single_field">
-                                            <select class="wide">
-                                                <option data-display="Gender">Gender</option>
-                                                <option value="1">male</option>
-                                                <option value="2">female</option>
+                                            <select class="wide" name="gen">
+                                                <option data-display="Gender" value=">=1">Gender</option>
+                                                <?php  foreach ($genders as $gender):?>
+                                                <option value="=<?=$gender['id']?>"><?=$gender['name']?></option>
+                                                <? endforeach; ?>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
+                                <input type="submit">
                             </form>
                         </div>
                         <div class="range_wrap">
