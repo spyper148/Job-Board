@@ -1,21 +1,18 @@
 <?php
 $db=require 'db/db.php';
 
-$cat = '>=1';
-$exp = '>=1';
-$loc = '>=1';
-$gen = '>=1';
-$qual = '>=1';
-$job_t = '>=1';
+var_dump($_GET['salary_min']);
+var_dump($_GET['salary_max']);
+$loc = $_GET['loc']??'>=1';
+$cat = $_GET['cat']??'>=1';
+$exp = $_GET['exp']??'>=1';
+$job_t = $_GET['job_t']??'>=1';
+$qual = $_GET['qual']??'>=1';
+$gen = $_GET['gen']??'>=1';
+$name = $_GET['name']??'';
 
-$loc = $_POST['loc'];
-$cat = $_POST['cat'];
-$exp = $_POST['exp'];
-$job_t = $_POST['job_t'];
-$qual = $_POST['qual'];
-$gen = $_POST['gen'];
-
-$jobs = $db->query("SELECT jobs.id, jobs.name, locations.name AS l_name, job_types.name as types_name, firms.src, jobs.date, jobs.Salary, categories.name as cat_name, experiences.name as e_name, qualifications.name as q_name, gender.name as g_name
+$jobs = $db->query("SELECT jobs.id, jobs.name, locations.name AS l_name, job_types.name as types_name, firms.src, jobs.date,
+       jobs.Salary, categories.name as cat_name, experiences.name as e_name, qualifications.name as q_name, gender.name as g_name
 FROM jobs 
 INNER JOIN job_types ON jobs.id_job_types = job_types.id 
 INNER JOIN locations ON locations.id = jobs.id_locations 
@@ -29,8 +26,9 @@ id_experiences {$exp} AND
 id_locations {$loc} AND
 id_gender {$gen} AND
 id_qualifications {$qual} AND
-id_job_types {$job_t} AND
-id_firm >=1")->fetchAll(PDO::FETCH_ASSOC);
+id_job_types {$job_t} AND 
+jobs.name LIKE '{$name}%';
+")->fetchAll(PDO::FETCH_ASSOC);
 
 $categories = $db -> query('SELECT * FROM categories')->fetchAll(PDO::FETCH_ASSOC);
 $genders = $db -> query('SELECT * FROM gender')->fetchAll(PDO::FETCH_ASSOC);
@@ -161,29 +159,30 @@ $locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
                     <div class="job_filter white-bg">
                         <div class="form_inner white-bg">
                             <h3>Filter</h3>
-                            <form action="jobs.php" method="post">
+                            <form action="jobs.php" method="get">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="single_field">
-                                            <input type="text" placeholder="Search keyword">
+                                            <input type="text" placeholder="Search keyword" name="name" value="<?=$name?>">
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="single_field">
                                             <select class="wide" name="loc">
-                                                <option data-display="Location" value=">=0">Location</option>
+                                                <option value=">=1" >Location</option>
                                                 <?php foreach ($locations as $location):?>
-                                                <option value="=<?=$location['id']?>"><?=$location['name']?></option>
+                                                <option value="=<?=$location['id']?>" <?php if('='.$location['id'] == $loc):?> selected <?php endif; ?>><?=$location['name']?></option>
                                                 <?php endforeach; ?>
+
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-lg-12">
                                         <div class="single_field">
-                                            <select class="wide" name="cat">
+                                            <select class="wide" name="cat" >
                                                 <option data-display="Category" value=">=1" >Category</option>
                                                 <?php foreach ($categories as $category):?>
-                                                <option value="=<?= $category['id']?>"><?=$category['name']?></option>
+                                                <option value="=<?= $category['id']?>" <?php if('='.$category['id'] == $cat):?> selected <?php endif; ?>><?=$category['name']?></option>
                                                 <?php  endforeach;?>
                                             </select>
                                         </div>
@@ -193,7 +192,7 @@ $locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
                                             <select class="wide" name="exp">
                                                 <option data-display="Experience" value=">=1">Experience</option>
                                                 <?php foreach ($experiences as $experience):?>
-                                                <option value="=<?=$experience['id']?>"><?=$experience['name']?></option>
+                                                <option value="=<?=$experience['id']?>" <?php if('='.$experience['id'] == $exp):?> selected <?php endif; ?>><?=$experience['name']?></option>
                                                 <?php endforeach;?>
                                             </select>
                                         </div>
@@ -203,7 +202,7 @@ $locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
                                             <select class="wide" name="job_t">
                                                 <option data-display="Job type" value=">=1">Job type</option>
                                                 <?php foreach ($job_types as $job_type): ?>
-                                                <option value="=<?=$job_type['id']?>"><?=$job_type['name']?></option>
+                                                <option value="=<?=$job_type['id']?>" <?php if('='.$job_type['id'] == $job_t):?> selected <?php endif; ?>><?=$job_type['name']?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>
@@ -213,7 +212,7 @@ $locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
                                             <select class="wide" name="qual">
                                                 <option data-display="Qualification" value=">=1">Qualification</option>
                                                 <?php foreach ($qualifications as $qualification):?>
-                                                <option value='=<?=$qualification['id']?>'><?= $qualification['name']?></option>
+                                                <option value='=<?=$qualification['id']?>' <?php if('='.$qualification['id'] == $qual):?> selected <?php endif; ?>><?= $qualification['name']?></option>
                                                 <?endforeach; ?>
                                             </select>
                                         </div>
@@ -223,26 +222,33 @@ $locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
                                             <select class="wide" name="gen">
                                                 <option data-display="Gender" value=">=1">Gender</option>
                                                 <?php  foreach ($genders as $gender):?>
-                                                <option value="=<?=$gender['id']?>"><?=$gender['name']?></option>
+                                                <option value="=<?=$gender['id']?>" <?php if('='.$gender['id'] == $gen):?> selected <?php endif; ?>><?=$gender['name']?></option>
                                                 <? endforeach; ?>
                                             </select>
                                         </div>
                                     </div>
                                 </div>
-                                <input type="submit">
-                            </form>
+
+
                         </div>
                         <div class="range_wrap">
                             <label for="amount">Price range:</label>
                             <div id="slider-range"></div>
                             <p>
                                 <input type="text" id="amount" readonly style="border:0; color:#7A838B; font-size: 14px; font-weight:400;">
+                                <input type="hidden" name="salary_min" id="salary_min">
+                                <input type="hidden" name="salary_max" id="salary_max">
                             </p>
                         </div>
                         <div class="reset_btn">
-                            <button  class="boxed-btn3 w-100" type="submit">Reset</button>
+                            <a class="boxed-btn3 w-100" href="jobs.php?loc=>=1&exp=>=1&cat=>=1&job_t=>=1&qual=>=1&gen=>=1&name=">Reset</a>
                         </div>
+                        <input class="boxed-btn3 w-100 job_submit" id="jobs_submit" type="submit" value="Submit">
+                        </form>
                     </div>
+
+
+
                 </div>
                 <div class="col-lg-9">
                     <div class="recent_joblist_wrap">
@@ -353,10 +359,15 @@ $locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
                 values: [ 750, 24600 ],
                 slide: function( event, ui ) {
                     $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] +"/ Year" );
+                    $("#salary_min").val( ui.values[0]);
+                    $("#salary_max").val( ui.values[1]);
                 }
             });
             $( "#amount" ).val( "$" + $( "#slider-range" ).slider( "values", 0 ) +
                 " - $" + $( "#slider-range" ).slider( "values", 1 ) + "/ Year");
+
+            $("#salary_min").val(  $( "#slider-range" ).slider("values")[0]);
+            $("#salary_max").val( $( "#slider-range" ).slider("values")[1]);
         } );
         </script>
 </body>
