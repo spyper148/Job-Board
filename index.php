@@ -193,7 +193,7 @@ $jobs_list = $db->query('SELECT jobs.id, jobs.name, locations.name AS l_name, jo
                 <?php foreach ($popular_categories as $popular_category): ?>
                 <div class="col-lg-4 col-xl-3 col-md-6">
                     <div class="single_catagory">
-                        <a href="jobs.php"><h4><?=$popular_category['name']?></h4></a>
+                        <a href="jobs.php?cat==<?=$popular_category['id']?>"><h4><?=$popular_category['name']?></h4></a>
                         <p> <span><?=$popular_category['COUNT(jobs.id_categories)']?></span> Available position</p>
                     </div>
                 </div>

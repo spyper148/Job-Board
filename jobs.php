@@ -1,8 +1,6 @@
 <?php
 $db=require 'db/db.php';
 
-var_dump($_GET['salary_min']);
-var_dump($_GET['salary_max']);
 $loc = $_GET['loc']??'>=1';
 $cat = $_GET['cat']??'>=1';
 $exp = $_GET['exp']??'>=1';
@@ -36,9 +34,9 @@ $qualifications = $db -> query('SELECT * FROM qualifications')->fetchAll(PDO::FE
 $job_types = $db -> query('SELECT * FROM job_types')->fetchAll(PDO::FETCH_ASSOC);
 $experiences = $db -> query('SELECT * FROM experiences')->fetchAll(PDO::FETCH_ASSOC);
 $locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
-
-
-
+$min_salary = $db ->query('SELECT min(Salary) FROM jobs')->fetch(PDO::FETCH_ASSOC);
+var_dump($min_salary);
+$max_salary = $db->query('SELECT max(Salary) FROM jobs')->fetch(PDO::FETCH_ASSOC);
 ?>
 
 <!doctype html>
@@ -352,11 +350,11 @@ $locations= $db -> query('SELECT * FROM locations')->fetchAll(PDO::FETCH_ASSOC);
 
 	<script>
         $( function() {
-            $( "#slider-range" ).slider({
+            $("#slider-range").slider({
                 range: true,
-                min: 0,
-                max: 24600,
-                values: [ 750, 24600 ],
+                min: 12,
+                max: 180,
+                values: [12, 180],
                 slide: function( event, ui ) {
                     $( "#amount" ).val( "$" + ui.values[ 0 ] + " - $" + ui.values[ 1 ] +"/ Year" );
                     $("#salary_min").val( ui.values[0]);
